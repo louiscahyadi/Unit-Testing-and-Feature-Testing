@@ -8,20 +8,24 @@ use Illuminate\Http\Request;
 
 class ItemController extends Controller
 {
-    public function insert() {
-        $item_name = request()->get('item', 'Empty');
+    public function insert(Request $requst)
+    {
+        $request->validate([
+            'item' => 'required|min:1',
+        ]);
 
         $task = new Task();
-        $task->name = $item_name;
+        $task->name = $request->item;
         $task->save();
 
-        return view('welcome');
+        return redirect('/dashboard');
     }
 
-    public function delete($id) {
-        $to_delete = Task::where('id', $id)->firstOrFail();
-        $to_delete->delete();
+    public function delete($id)
+    {
+        $task = Task::findOrFail($id);
+        $task->delete();
 
-        return view('welcome');
+        return redirect('/dashboard');
     }
 }
